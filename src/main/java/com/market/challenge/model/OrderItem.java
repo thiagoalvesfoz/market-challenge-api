@@ -1,0 +1,98 @@
+package com.market.challenge.model;
+
+import java.io.Serializable;
+
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.market.challenge.model.pk.OrderItemPK;
+
+@Entity
+@Table(name = "tb_order_item")
+public class OrderItem implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	
+	@EmbeddedId //-> id para chave composta
+	private OrderItemPK id = new OrderItemPK();
+	
+	private Integer quantity;
+	private Double price;
+	
+	public OrderItem() {
+	}
+	
+
+	public OrderItem(Order order, Product product, Integer quantity, Double price) {
+		this.id.setOrder(order); //chave composta
+		this.id.setProduct(product); //chave composta
+		this.quantity = quantity;
+		this.price = price;
+	}
+	
+	//getters e setter da chave composta
+	@JsonIgnore //corrige o loop infinito
+	public Order getOrder() {
+		return id.getOrder();
+	}
+	
+	public void setOrder(Order order) {
+		this.id.setOrder(order);
+	}
+	
+	public Product getProduct() {
+		return id.getProduct();
+	}
+	
+	public void setProduct(Product product) {
+		this.id.setProduct(product);
+	}
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrderItem other = (OrderItem) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	public Double getSubTotal() {
+		return price * quantity;
+	}
+	
+}
