@@ -18,25 +18,32 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.market.challenge.model.User;
 import com.market.challenge.services.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
+@Api("User")
 @RequestMapping(value = "/users")
 public class UserController {
 	
 	@Autowired
 	private UserService service;
 	
+	@ApiOperation("Mostra lista de usuários")
 	@GetMapping
 	private ResponseEntity<List<User>> findAll() {
 		List<User> list = service.findAll();
 		return ResponseEntity.ok(list);
 	}
 	
+	@ApiOperation("Mostra dados do usuário cadastrado")
 	@GetMapping("/{userId}")
 	private ResponseEntity<User> findById(@PathVariable Long userId) {
 		User obj = service.findById(userId);
 		return ResponseEntity.ok(obj); //omitido o método body
 	}
 	
+	@ApiOperation("Adiciona um novo usuário")
 	@PostMapping 	//inserindo de forma adequada
 	private ResponseEntity<User> insert(@RequestBody User user) {
 		
@@ -52,12 +59,14 @@ public class UserController {
 		return ResponseEntity.created(uri).body(user);
 	}
 	
+	@ApiOperation("Deleta um usuário cadastrado pelo id")
 	@DeleteMapping("/{id}")
 	private ResponseEntity<Void> delete(@PathVariable Long id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation("Atualiza dados do usuário")
 	@PutMapping("/{id}")
 	private ResponseEntity<User> update(@PathVariable Long id, @RequestBody User userBody){
 		userBody = service.update(id, userBody);
